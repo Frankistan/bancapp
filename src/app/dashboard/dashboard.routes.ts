@@ -5,15 +5,8 @@ import { IngresoEgresoComponent } from '../ingreso-egreso/ingreso-egreso.compone
 import { DetalleComponent } from '../ingreso-egreso/detalle/detalle.component';
 
 export const dashboardRoutes: Routes = [
-  { path: "", component: EstadisticaComponent},
-  { path: "ingreso-egreso", component: IngresoEgresoComponent},
-  { path: "detalle", component: DetalleComponent},
-  { path: "**", redirectTo: ""}
-
+  { path: "", component: EstadisticaComponent },
+  { path: "ingreso-egreso", component: IngresoEgresoComponent },
+  { path: "detalle", component: DetalleComponent },
+  { path: "**", redirectTo: "" }
 ];
-
-// @NgModule({
-//   imports: [RouterModule.forChild(dashboardRoutes)],
-//   exports: [RouterModule]
-// })
-// export class AppRoutingModule { }
