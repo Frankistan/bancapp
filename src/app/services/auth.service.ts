@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-import Swal from 'sweetalert2/dist/sweetalert2.js';
-import * as firebase from 'firebase';
-import { Observable } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { User } from '../models/user';
-import { AppState } from '../app.reducer';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { Store } from '@ngrx/store';
+import { AngularFirestore } from '@angular/fire/firestore';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { AppState } from '../app.reducer';
 import { StartLoadingAction, StopLoadingAction } from '../shared/ui.actions';
+import { SetCurrentUserAction, UnsetCurrentUserAction } from '../auth/auth.actions';
+import { User } from '../models/user';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import * as firebase from 'firebase';
 
 @Injectable({
 	providedIn: 'root'
@@ -27,6 +28,15 @@ export class AuthService {
 
 	initAuthListener() {
 		this.afAuth.authState.subscribe((fUser: firebase.User) => {
+			if (fUser) {
+				this.db.doc(`users/${fUser.uid}`)
+					.valueChanges()
+					.subscribe((fUser: User) => {
+						this.store.dispatch(new SetCurrentUserAction(fUser));
+					});
+			} else {
+				this.store.dispatch(new UnsetCurrentUserAction());
+			}
 			console.log('FB User state: ', fUser);
 		});
 	}
@@ -50,9 +60,9 @@ export class AuthService {
 
 			this.db.doc(`users/${dUser.uid}`)
 				.set(dUser)
-				.then(_ => { 
-					this.store.dispatch(new StopLoadingAction()); 
-					this.router.navigate(['/auth/login']) 
+				.then(_ => {
+					this.store.dispatch(new StopLoadingAction());
+					this.router.navigate(['/auth/login'])
 				});
 
 
@@ -68,11 +78,11 @@ export class AuthService {
 		this.store.dispatch(new StartLoadingAction());
 		try {
 			await this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password);
-			this.store.dispatch(new StopLoadingAction()); 
+			this.store.dispatch(new StopLoadingAction());
 			this.router.navigate(['/']);
 		} catch (error) {
 			console.error(error);
-			this.store.dispatch(new StopLoadingAction()); 
+			this.store.dispatch(new StopLoadingAction());
 			Swal.fire('Error al iniciar sesión: ', error.message, 'error');
 		}
 	}
