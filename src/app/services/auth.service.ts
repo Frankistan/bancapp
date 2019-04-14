@@ -7,6 +7,9 @@ import * as firebase from 'firebase';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../models/user';
+import { AppState } from '../app.reducer';
+import { Store } from '@ngrx/store';
+import { StartLoadingAction, StopLoadingAction } from '../shared/ui.actions';
 
 @Injectable({
 	providedIn: 'root'
@@ -16,6 +19,7 @@ export class AuthService {
 	fUser: firebase.auth.UserCredential;
 
 	constructor(
+		private store: Store<AppState>,
 		private db: AngularFirestore,
 		private afAuth: AngularFireAuth,
 		private router: Router) { }
@@ -34,6 +38,7 @@ export class AuthService {
 	}
 
 	async createUser(user) {
+		this.store.dispatch(new StartLoadingAction());
 		try {
 			const fUser = await this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password);
 
@@ -45,21 +50,29 @@ export class AuthService {
 
 			this.db.doc(`users/${dUser.uid}`)
 				.set(dUser)
-				.then(_ => this.router.navigate(['/auth/login']));
-				
+				.then(_ => { 
+					this.store.dispatch(new StopLoadingAction()); 
+					this.router.navigate(['/auth/login']) 
+				});
+
+
+
 		} catch (error) {
 			console.error(error);
 			Swal.fire('Error al crear usuario: ', error.message, 'error');
+			this.store.dispatch(new StopLoadingAction());
 		}
 	}
 
 	async login(user) {
-
+		this.store.dispatch(new StartLoadingAction());
 		try {
 			await this.afAuth.auth.signInWithEmailAndPassword(user.email, user.password);
+			this.store.dispatch(new StopLoadingAction()); 
 			this.router.navigate(['/']);
 		} catch (error) {
 			console.error(error);
+			this.store.dispatch(new StopLoadingAction()); 
 			Swal.fire('Error al iniciar sesión: ', error.message, 'error');
 		}
 	}
