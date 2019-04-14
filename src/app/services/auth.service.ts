@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { User } from '../models/user';
 
 @Injectable({
 	providedIn: 'root'
@@ -13,7 +15,9 @@ export class AuthService {
 
 	fUser: firebase.auth.UserCredential;
 
-	constructor(private afAuth: AngularFireAuth,
+	constructor(
+		private db: AngularFirestore,
+		private afAuth: AngularFireAuth,
 		private router: Router) { }
 
 
@@ -31,8 +35,18 @@ export class AuthService {
 
 	async createUser(user) {
 		try {
-			this.fUser = await this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password);
-			this.router.navigate(['/auth/login']);
+			const fUser = await this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password);
+
+			const dUser: User = {
+				uid: fUser.user.uid,
+				email: fUser.user.email,
+				name: user.name
+			};
+
+			this.db.doc(`users/${dUser.uid}`)
+				.set(dUser)
+				.then(_ => this.router.navigate(['/auth/login']));
+				
 		} catch (error) {
 			console.error(error);
 			Swal.fire('Error al crear usuario: ', error.message, 'error');

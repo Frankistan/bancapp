@@ -26,7 +26,7 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
     DetalleComponent,
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
   ],
   imports: [
     BrowserModule,
