@@ -3,5 +3,6 @@ export interface Movimiento {
 	amount: number;
 	type: string;
 	uid?: string;
+	id?:string;
 }
 
