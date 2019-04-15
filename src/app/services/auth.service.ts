@@ -18,6 +18,7 @@ import * as firebase from 'firebase';
 export class AuthService {
 
 	fUser: firebase.auth.UserCredential;
+	user: User;
 
 	constructor(
 		private store: Store<AppState>,
@@ -32,6 +33,7 @@ export class AuthService {
 				this.db.doc(`users/${fUser.uid}`)
 					.valueChanges()
 					.subscribe((fUser: User) => {
+						this.user = fUser;
 						this.store.dispatch(new SetCurrentUserAction(fUser));
 					});
 			} else {

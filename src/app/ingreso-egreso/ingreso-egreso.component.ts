@@ -7,16 +7,17 @@ import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StopLoadingAction } from '../shared/ui.actions';
+import { SetItemsAction } from './movimiento.actions';
 
 @Component({
 	selector: 'app-ingreso-egreso',
 	templateUrl: './ingreso-egreso.component.html',
 	styles: []
 })
-export class IngresoEgresoComponent implements OnInit,OnDestroy {
+export class IngresoEgresoComponent implements OnInit, OnDestroy {
 
-	movimientoForm:FormGroup;
-	tipo:string = 'ingreso';
+	movimientoForm: FormGroup;
+	tipo: string = 'ingreso';
 	cargando: boolean;
 	destroy = new Subject<any>();
 
@@ -26,39 +27,46 @@ export class IngresoEgresoComponent implements OnInit,OnDestroy {
 		private movSVC: MovementsService,
 	) {
 		this.createForm();
-	 }
+	}
 
 	ngOnInit() {
 		this.store.select('ui')
-		.pipe(takeUntil(this.destroy))
-		.subscribe(state =>{
-			this.cargando = state.isLoading;
+			.pipe(takeUntil(this.destroy))
+			.subscribe(state => {
+				this.cargando = state.isLoading;
+			});
 
-		});
+		// this.movSVC.list().subscribe(movs => {
+		// 	this.store.dispatch(new SetItemsAction(movs));
+		// });
 	}
 
 	private createForm() {
 		this.movimientoForm = this._fb.group({
 			description: ['', [Validators.required]],
-			amount: ['1', [Validators.required,Validators.min(1)]]
+			amount: ['1', [Validators.required, Validators.min(1)]]
 		});
 	}
 
-	save(){
-		let mov ={...this.movimientoForm.value,type: this.tipo};
-		this.movSVC.create(mov).then(_ =>{
+	save() {
+		let mov = { 
+			...this.movimientoForm.value, 
+			type: this.tipo 
+		};
+
+		this.movSVC.create(mov).then(_ => {
 			this.store.dispatch(new StopLoadingAction());
 			Swal.fire(`${this.tipo.toUpperCase()} creado con éxito: `, mov.description, 'success');
 			this.reset();
 		});
 	}
 
-	reset(){
-		this.movimientoForm.reset({amount: 1});
+	reset() {
+		this.movimientoForm.reset({ amount: 1 });
 	}
 
 	ngOnDestroy(): void {
-        this.destroy.next();
-    }
+		this.destroy.next();
+	}
 
 }
