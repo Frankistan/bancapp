@@ -41,7 +41,6 @@ export class RegisterComponent implements OnInit,OnDestroy {
 	}
 
 	save() {
-		console.log('data: ', this.registerForm.value);
 		this.auth.createUser(this.registerForm.value);
 	}
 

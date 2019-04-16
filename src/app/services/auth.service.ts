@@ -40,7 +40,6 @@ export class AuthService {
 			} else {
 				this.store.dispatch(new UnsetCurrentUserAction());
 			}
-			console.log('FB User state: ', fUser);
 		});
 	}
 

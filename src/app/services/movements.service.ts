@@ -30,7 +30,6 @@ export class MovementsService {
 				filter(auth => auth.user != null)
 			)
 			.subscribe(state => {
-				console.log('current user: ', state.user);
 				this.userId = state.user.uid;
 
 				this.movCollection = this.db.collection("movements", ref =>

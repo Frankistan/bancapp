@@ -40,7 +40,6 @@ export class LoginComponent implements OnInit,OnDestroy {
 	}
 
 	save() {
-		console.log('data: ', this.loginForm.value);
 		this.auth.login(this.loginForm.value);
 	}
 
