@@ -5,6 +5,7 @@ import { CustomFirebaseModule } from './modules/custom-firebase.module';
 import { AppRoutingModule } from './app-routing.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ChartsModule } from 'ng2-charts';
 // COMPONENT
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -42,6 +43,7 @@ import { OrdenarPipe } from './ingreso-egreso/ordenar.pipe';
     FormsModule,
     ReactiveFormsModule,
     CustomFirebaseModule,
+    ChartsModule,
     StoreModule.forRoot(reducers),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

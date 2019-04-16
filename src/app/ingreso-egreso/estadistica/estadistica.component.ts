@@ -4,6 +4,8 @@ import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Movimiento } from 'src/app/models/movimiento';
+import { ChartType } from 'chart.js';
+import { Label, MultiDataSet } from 'ng2-charts';
 
 @Component({
 	selector: 'app-estadistica',
@@ -18,6 +20,10 @@ export class EstadisticaComponent implements OnInit, OnDestroy {
 	totalEgresos: number = 0;
 	destroy = new Subject<any>();
 	movements: Movimiento[];
+
+	public doughnutChartLabels: Label[] = ['Ingresos', 'Egresos'];
+	public doughnutChartData: MultiDataSet = [];
+	public doughnutChartType: ChartType = 'doughnut';
 
 	constructor(private store: Store<AppState>) { }
 
@@ -40,6 +46,8 @@ export class EstadisticaComponent implements OnInit, OnDestroy {
 				this.totalEgresos += movimiento.amount;
 			}
 		});
+
+		this.doughnutChartData = [[this.totalIngresos,this.totalEgresos]];
 	}
 
 	ngOnDestroy(): void {
