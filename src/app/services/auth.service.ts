@@ -11,6 +11,7 @@ import { User } from '../models/user';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as firebase from 'firebase';
+import { UnsetItemsAction } from '../ingreso-egreso/movimiento.actions';
 
 @Injectable({
 	providedIn: 'root'
@@ -92,6 +93,8 @@ export class AuthService {
 	async logout() {
 		try {
 			await this.afAuth.auth.signOut();
+			this.store.dispatch( new UnsetCurrentUserAction());
+			this.store.dispatch (new UnsetItemsAction());
 			this.router.navigate(['/auth/login']);
 		} catch (error) {
 			console.error(error);
