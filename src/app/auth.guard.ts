@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanLoad } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanLoad {
 	authenticated: boolean = false;
 
 	constructor(
@@ -27,5 +27,19 @@ export class AuthGuard implements CanActivate {
 				return authenticated;
 			})
 		);
+	}
+
+	canLoad(): Observable<boolean> | Promise<boolean> | boolean {
+
+			return this.auth.isAuthenticated.pipe(
+				map(authenticated => {
+	
+					if (!authenticated) {
+						this.router.navigate(['/auth/login']);
+					}
+					return authenticated;
+				}),
+				take(1)
+			);
 	}
 }
