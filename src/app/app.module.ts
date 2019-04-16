@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomFirebaseModule } from './modules/custom-firebase.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -19,6 +19,7 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
 import { reducers } from './app.reducer';
 import { environment } from 'src/environments/environment';
+import { OrdenarPipe } from './ingreso-egreso/ordenar.pipe';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { environment } from 'src/environments/environment';
     FooterComponent,
     NavbarComponent,
     SidebarComponent,
+    OrdenarPipe,
   ],
   imports: [
     BrowserModule,

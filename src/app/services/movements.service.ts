@@ -14,7 +14,7 @@ import { SetItemsAction } from '../ingreso-egreso/movimiento.actions';
 	providedIn: 'root'
 })
 export class MovementsService {
-	private user: any;
+	private userId: any;
 	movCollection: AngularFirestoreCollection<Movimiento>;
 
 	constructor(
@@ -31,10 +31,10 @@ export class MovementsService {
 			)
 			.subscribe(state => {
 				console.log('current user: ', state.user);
-				const userId = state.user.uid;
+				this.userId = state.user.uid;
 
 				this.movCollection = this.db.collection("movements", ref =>
-					ref.where("uid", "==", userId));
+					ref.where("uid", "==", this.userId));
 					this.list();
 			});
 	}
@@ -68,15 +68,29 @@ export class MovementsService {
 
 		let mov = {
 			...movement,
-			uid: this.user.uid
+			uid: this.userId
 		};
 
 		try {
 			// await this.db.doc(`movements/${mov.id}`).set(mov);
 			await this.db.collection("movements").add(mov);
+			
 		} catch (error) {
 			console.error(error);
 			Swal.fire('Error al crear movimiento bancario: ', error.message, 'error');
+			this.store.dispatch(new StopLoadingAction());
+		}
+	}
+
+	async delete(id:string){
+		this.store.dispatch(new StartLoadingAction());
+		
+		try {
+			await this.db.doc(`movements/${id}/`).delete();
+			Swal.fire(`Movimiento borrado con éxito: `, '', 'success');
+			this.store.dispatch(new StopLoadingAction());
+		} catch (error) {
+			Swal.fire('Error al borrar movimiento: ', error.message, 'error');
 			this.store.dispatch(new StopLoadingAction());
 		}
 	}
