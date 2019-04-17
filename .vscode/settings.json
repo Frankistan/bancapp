@@ -1,0 +1,6 @@
+{
+	"workbench.tree.indent": 12,
+	"workbench.tips.enabled": false,
+	"editor.insertSpaces": false,
+	"editor.defaultFormatter": "HookyQR.beautify"
+}
